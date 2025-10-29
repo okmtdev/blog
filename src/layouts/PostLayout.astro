@@ -1,18 +1,30 @@
 ---
-import { getEntry, render } from "astro:content";
 import Main from "../layouts/MainLayout.astro";
 import Markdown from "../components/Markdown.astro";
 import CopyRight from "../components/misc/CopyRight.astro";
 
-const aboutPost = await getEntry("specs", "about");
-const { Content } = await render(aboutPost!);
 interface Props {
   title?: string;
   subTitle?: string;
   bannerImage?: string;
   published?: Date;
+  license?: {
+    name: string;
+    url?: string;
+  };
+  author?: string;
+  sourceLink?: string;
 }
-const { title, subTitle, bannerImage, published } = Astro.props;
+
+const {
+  title,
+  subTitle,
+  bannerImage,
+  published,
+  license,
+  author,
+  sourceLink,
+} = Astro.props;
 ---
 
 <Main title={title} subTitle={subTitle} bannerImage={bannerImage}>
@@ -20,18 +32,29 @@ const { title, subTitle, bannerImage, published } = Astro.props;
   <div class="article-wrapper">
     <div class="article">
       <Markdown>
-        <Content />
+        <slot />
       </Markdown>
-      {published && title && <CopyRight title={title} published={published} />}
+      {
+        published && title && (
+          <CopyRight
+            title={title}
+            published={published}
+            license={license}
+            author={author}
+            sourceLink={sourceLink}
+          />
+        )
+      }
     </div>
   </div>
 </Main>
 
 <style>
   .article-wrapper {
-    @apply w-full rounded-2xl bg-[var(--card-color)] p-10;
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
   }
   .article {
     @apply flex flex-col;
+    font-size: var(--primary-font);
   }
 </style>
